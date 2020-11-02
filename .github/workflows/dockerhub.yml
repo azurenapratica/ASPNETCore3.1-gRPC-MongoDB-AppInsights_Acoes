@@ -1,0 +1,36 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    
+    env:
+      NOME_IMAGEM: grpacoes-mongodb-appinsights
+      PATH_PROJETO: ./SiteContagem
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login no Docker Hub
+      uses: docker/login-action@v1.6.0
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        
+    - name: Build e Push no Azure Container Registry
+      env:
+        CAMINHO_IMAGEM: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.NOME_IMAGEM }}
+      run: |
+        echo ${{ env.CAMINHO_IMAGEM }}
+        cd ${{ env.PATH_PROJETO }}
+        docker build . --file Dockerfile --tag ${{ env.CAMINHO_IMAGEM }}:$GITHUB_RUN_NUMBER
+        docker tag ${{ env.CAMINHO_IMAGEM }}:$GITHUB_RUN_NUMBER ${{ env.CAMINHO_IMAGEM }}:latest
+        docker push ${{ env.CAMINHO_IMAGEM }}
