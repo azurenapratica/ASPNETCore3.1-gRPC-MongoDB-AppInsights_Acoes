@@ -12,7 +12,7 @@ jobs:
     
     env:
       NOME_IMAGEM: grpacoes-mongodb-appinsights
-      PATH_PROJETO: ./SiteContagem
+      PATH_PROJETO: ./gRPCAcoes
 
     runs-on: ubuntu-latest
 
